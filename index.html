@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Истинный Рассвет | Музей Астрономии</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:wght@400;500;600;700&display=swap');
+
+    :root {
+      --graphite-dark: #1a1a1c;
+      --graphite: #2d2d30;
+      --graphite-light: #3f3f43;
+      --graphite-lighter: #52525a;
+      --gold: #c9a961;
+      --gold-light: #e4c97e;
+      --gold-dark: #9c8040;
+      --bronze: #b87333;
+      --parchment: #e8dcc4;
+      --parchment-dark: #c9b896;
+      --text-primary: #e8dcc4;
+      --text-secondary: #9a8f78;
+      --border-gold: rgba(201, 169, 97, 0.3);
+      --shadow-gold: rgba(201, 169, 97, 0.15);
+    }
+
+    /* iPhone / iOS Safari compatibility */
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      min-height: 100%;
+      background: var(--graphite-dark);
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    button, input {
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
+    }
+
+    input {
+      font-size: 16px; /* Prevents automatic zoom when focusing fields on iPhone */
+    }
+
+    .container {
+      padding-top: calc(50px + env(safe-area-inset-top));
+      padding-bottom: calc(50px + env(safe-area-inset-bottom));
+    }
+
+    .modal-overlay {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal {
+      max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+      background: var(--graphite-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(ellipse at top, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, rgba(184, 115, 53, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #1a1a1c 0%, #232326 50%, #1a1a1c 100%);
+    }
+
+    /* Museum texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(201,169,97,0.01) 2px, rgba(201,169,97,0.01) 4px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ornamental corners */
+    .ornament {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      pointer-events: none;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    .ornament::before,
+    .ornament::after {
+      content: '';
+      position: absolute;
+      border: 2px solid var(--gold);
+    }
+
+    .ornament.top-left {
+      top: 20px;
+      left: 20px;
+    }
+    .ornament.top-left::before {
+      top: 0; left: 0; width: 40px; height: 40px;
+      border-right: none; border-bottom: none;
+    }
+    .ornament.top-left::after {
+      top: 8px; left: 8px; width: 24px; height: 24px;
+      border-right: none; border-bottom: none;
+    }
+
+    .ornament.top-right {
+      top: 20px;
+      right: 20px;
+    }
+    .ornament.top-right::before {
+      top: 0; right: 0; width: 40px; height: 40px;
+      border-left: none; border-bottom: none;
+    }
+    .ornament.top-right::after {
+      top: 8px; right: 8px; width: 24px; height: 24px;
+      border-left: none; border-bottom: none;
+    }
+
+    .ornament.bottom-left {
+      bottom: 20px;
+      left: 20px;
+    }
+    .ornament.bottom-left::before {
+      bottom: 0; left: 0; width: 40px; height: 40px;
+      border-right: none; border-top: none;
+    }
+    .ornament.bottom-left::after {
+      bottom: 8px; left: 8px; width: 24px; height: 24px;
+      border-right: none; border-top: none;
+    }
+
+    .ornament.bottom-right {
+      bottom: 20px;
+      right: 20px;
+    }
+    .ornament.bottom-right::before {
+      bottom: 0; right: 0; width: 40px; height: 40px;
+      border-left: none; border-top: none;
+    }
+    .ornament.bottom-right::after {
+      bottom: 8px; right: 8px; width: 24px; height: 24px;
+      border-left: none; border-top: none;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 50px 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .museum-emblem {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      color: var(--gold);
+      filter: drop-shadow(0 0 10px rgba(201, 169, 97, 0.3));
+    }
+
+    .logo {
+      font-family: 'Cinzel', serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(201, 169, 97, 0.3);
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo::before,
+    .logo::after {
+      content: '❖';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--gold-dark);
+    }
+    .logo::before { left: -30px; }
+    .logo::after { right: -30px; }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+      color: var(--gold-dark);
+      font-size: 0.9rem;
+      letter-spacing: 8px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+      max-width: 100px;
+      margin: 0 15px;
+    }
+
+    /* Museum Card - framed like an exhibit */
+    .card {
+      background: linear-gradient(135deg, rgba(45, 45, 48, 0.9) 0%, rgba(35, 35, 38, 0.95) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      padding: 32px 28px;
+      margin-bottom: 28px;
+      position: relative;
+      box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(201, 169, 97, 0.1);
+    }
+
+    /* Double frame effect */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border: 1px solid rgba(201, 169, 97, 0.15);
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    /* User Badge - clickable for WhatsApp */
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(201, 169, 97, 0.08) 0%, rgba(184, 115, 53, 0.05) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .user-section::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      border: 1px solid rgba(201, 169, 97, 0.1);
+      pointer-events: none;
+    }
+
+    .user-section::after {
+      content: '✉ Написать в WhatsApp';
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      transition: bottom 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .user-section:hover {
+      background: linear-gradient(135deg, rgba(201, 169, 97, 0.15) 0%, rgba(184, 115, 53, 0.1) 100%);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201, 169, 97, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .user-section:hover::after {
+      bottom: 6px;
+    }
+
+    .user-section:active {
+      transform: translateY(0);
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--graphite-dark);
+      flex-shrink: 0;
+      border: 2px solid var(--gold-light);
+      box-shadow: 0 0 15px rgba(201, 169, 97, 0.3);
+    }
+
+    .user-info {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .user-info h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .user-info p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    .whatsapp-icon {
+      font-size: 1.3rem;
+      color: var(--gold);
+      transition: transform 0.3s;
+    }
+
+    .user-section:hover .whatsapp-icon {
+      transform: translateX(4px) scale(1.1);
+    }
+
+    /* Time Display - like a museum clock */
+    .time-display {
+      text-align: center;
+      padding: 24px 20px;
+      background: linear-gradient(180deg, rgba(26, 26, 28, 0.8) 0%, rgba(35, 35, 38, 0.8) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .time-display::before {
+      content: '';
+      position: absolute;
+      top: 5px; left: 5px; right: 5px; bottom: 5px;
+      border: 1px solid rgba(201, 169, 97, 0.08);
+      pointer-events: none;
+    }
+
+    .time-label {
+      font-family: 'Cinzel', serif;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+
+    .time-value {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 3px;
+      text-shadow: 0 0 20px rgba(201, 169, 97, 0.4);
+    }
+
+    .date-value {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-style: italic;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* Inputs - vintage style */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(26, 26, 28, 0.6);
+      border: 1px solid var(--border-gold);
+      border-radius: 2px;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      font-family: 'Cormorant Garamond', serif;
+      transition: all 0.3s ease;
+      outline: none;
+      letter-spacing: 0.5px;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.1), inset 0 0 20px rgba(201, 169, 97, 0.05);
+      background: rgba(26, 26, 28, 0.9);
+    }
+
+    input::placeholder {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Coords display - exhibit label style */
+    .coords-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, rgba(201, 169, 97, 0.05) 0%, rgba(26, 26, 28, 0.5) 100%);
+      border: 1px solid var(--border-gold);
+      border-left: 3px solid var(--gold);
+      border-radius: 2px;
+      margin-top: 14px;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    .coords-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .copy-btn {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--gold-dark);
+      border-radius: 2px;
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: var(--gold);
+      color: var(--graphite-dark);
+      box-shadow: 0 0 15px rgba(201, 169, 97, 0.4);
+    }
+
+    .copy-btn.copied {
+      background: var(--bronze);
+      border-color: var(--bronze);
+      color: var(--parchment);
+    }
+
+    /* Buttons - vintage brass style */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      flex: 1;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+      color: var(--graphite-dark);
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 4px 15px rgba(201, 169, 97, 0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(201, 169, 97, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: transparent;
+      border: 1px solid var(--gold-dark);
+      color: var(--gold);
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: rgba(201, 169, 97, 0.1);
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(201, 169, 97, 0.2);
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      color: var(--gold);
+      font-family: 'Cinzel', serif;
+      padding: 24px;
+      display: none;
+      letter-spacing: 2px;
+      font-style: italic;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(201, 169, 97, 0.1);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Results - exhibit cards */
+    .results-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .result-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 22px;
+      background: linear-gradient(135deg, rgba(26, 26, 28, 0.6) 0%, rgba(35, 35, 38, 0.6) 100%);
+      border: 1px solid rgba(201, 169, 97, 0.15);
+      border-left: 3px solid var(--gold-dark);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .result-card:hover {
+      background: linear-gradient(135deg, rgba(201, 169, 97, 0.08) 0%, rgba(35, 35, 38, 0.8) 100%);
+      border-left-color: var(--gold);
+      transform: translateX(4px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .result-card.highlight {
+      border-left-color: var(--gold);
+      background: linear-gradient(135deg, rgba(201, 169, 97, 0.12) 0%, rgba(35, 35, 38, 0.8) 100%);
+      box-shadow: inset 0 0 20px rgba(201, 169, 97, 0.05);
+    }
+
+    .result-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+
+    .result-value {
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+    }
+
+    /* Section title - museum plaque */
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin: 30px 0 18px;
+      text-align: center;
+      position: relative;
+      padding: 10px 0;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      content: '⚜';
+      margin: 0 12px;
+      color: var(--gold-dark);
+      font-size: 0.9rem;
+    }
+
+    /* History */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(26, 26, 28, 0.5);
+      border: 1px solid rgba(201, 169, 97, 0.1);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .history-item:hover {
+      background: rgba(201, 169, 97, 0.08);
+      border-color: var(--gold-dark);
+      transform: translateX(4px);
+    }
+
+    .history-location {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .history-time {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .delete-btn {
+      color: var(--bronze);
+      opacity: 0;
+      transition: all 0.3s;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+
+    .history-item:hover .delete-btn {
+      opacity: 1;
+    }
+
+    .delete-btn:hover {
+      background: rgba(184, 115, 53, 0.15);
+      color: #d98a5a;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 30px 20px;
+      font-style: italic;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--graphite-lighter);
+    }
+
+    .status-dot.online {
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-gold);
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Modal - museum entrance */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 12, 0.92);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: linear-gradient(135deg, var(--graphite) 0%, var(--graphite-dark) 100%);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      padding: 40px 32px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(201, 169, 97, 0.2);
+      transform: scale(0.9);
+      transition: transform 0.4s ease;
+      position: relative;
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 10px; right: 10px; bottom: 10px;
+      border: 1px solid rgba(201, 169, 97, 0.2);
+      pointer-events: none;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal-emblem {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--gold);
+      filter: drop-shadow(0 0 15px rgba(201, 169, 97, 0.4));
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--gold);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .modal-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      font-style: italic;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .error-msg {
+      color: #d98a5a;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      min-height: 20px;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .logo { font-size: 1.6rem; letter-spacing: 2px; }
+      .logo::before, .logo::after { display: none; }
+      .time-value { font-size: 1.7rem; }
+      .btn-row { flex-direction: column; }
+      .card { padding: 24px 18px; }
+      .ornament { width: 60px; height: 60px; }
+      .ornament::before { width: 20px; height: 20px; }
+      .ornament::after { width: 12px; height: 12px; }
+      .user-section::after { font-size: 0.75rem; }
+    }
+  </style>
+
+  <meta name="theme-color" content="#1a1a1c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Истинный Рассвет">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-180.png">
+
+</head>
+<body>
+  <!-- Ornamental corners -->
+  <div class="ornament top-left"></div>
+  <div class="ornament top-right"></div>
+  <div class="ornament bottom-left"></div>
+  <div class="ornament bottom-right"></div>
+
+  <!-- Registration Modal -->
+  <div class="modal-overlay" id="regModal">
+    <div class="modal">
+      <div class="modal-emblem">⚜</div>
+      <div class="modal-title">Добро пожаловать</div>
+      <div class="modal-subtitle">Вход в Музей Астрономии</div>
+      
+      <div class="form-group">
+        <label>Ваше имя</label>
+        <input type="text" id="regName" placeholder="Введите ваше имя" />
+        <div class="error-msg" id="nameError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label>Номер телефона</label>
+        <input type="tel" id="regPhone" placeholder="+7 (___) ___-__-__" />
+        <div class="error-msg" id="phoneError"></div>
+      </div>
+      
+      <button onclick="submitRegistration()">Войти в музей</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="museum-emblem">☉</div>
+      <h1 class="logo">Истинный Рассвет</h1>
+      <div class="divider">❖ ❖ ❖</div>
+      <p class="tagline">Музей Астрономии • Коллекция Небесных Явлений</p>
+    </header>
+
+    <div class="card">
+      <div class="user-section" id="userSection" style="display: none;" onclick="contactWhatsApp()">
+        <div class="avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <h3 id="userName">—</h3>
+          <p id="userPhone">—</p>
+        </div>
+        <div class="whatsapp-icon">➤</div>
+      </div>
+
+      <div class="time-display">
+        <div class="time-label">Хронометр</div>
+        <div class="time-value" id="currentTime">--:--:--</div>
+        <div class="date-value" id="currentDate">Загрузка...</div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="locationInput" placeholder="Введите название города или местности..." />
+        <div class="coords-display" id="coordsDisplay" style="display: none;">
+          <div style="flex: 1;">
+            <span class="coords-label">Координаты экспозиции</span>
+            <span id="coordsText"></span>
+          </div>
+          <button class="copy-btn" onclick="copyCoords(event)">Копировать</button>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button onclick="fetchSunData()">Исследовать</button>
+        <button class="secondary" onclick="getCurrentLocation()">📍 Моё место</button>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Изучаем небесные свитки...</div>
+      </div>
+
+      <div class="results-grid" id="resultsGrid"></div>
+    </div>
+
+    <div class="section-title">Журнал Посещений</div>
+    <div class="card">
+      <div class="history-list" id="historyList">
+        <div class="empty-state">Журнал пока пуст</div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Подключение к архиву...</span>
+    </div>
+
+    <footer>
+      Музей Астрономии · Anno MMXXVI
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwGWAMY3ivKfZpZLQ87kB7tnj9GS3kCvY",
+      authDomain: "whatsapp-fc91e.firebaseapp.com",
+      projectId: "whatsapp-fc91e",
+      storageBucket: "whatsapp-fc91e.firebasestorage.app",
+      messagingSenderId: "245791575033",
+      appId: "1:245791575033:web:3255c5f20c3b3bddcf4b28",
+      measurementId: "G-M7YJSTX4EX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUserId = null;
+    let currentCoords = null;
+    let historyUnsubscribe = null;
+
+    signInAnonymously(auth).catch(() => updateStatus(false));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        updateStatus(true);
+        loadHistory();
+      } else {
+        updateStatus(false);
+      }
+    });
+
+    function updateStatus(online) {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      if (online) {
+        dot.classList.add('online');
+        text.textContent = 'Архив доступен';
+      } else {
+        dot.classList.remove('online');
+        text.textContent = 'Локальный режим';
+      }
+    }
+
+    async function saveProfile(name, phone) {
+      if (!currentUserId) return;
+      try {
+        await setDoc(doc(db, 'users', currentUserId), {
+          userId: currentUserId,
+          name,
+          phone,
+          registeredAt: serverTimestamp()
+        }, { merge: true });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function saveToHistory(location, coords, sunriseTime) {
+      if (!currentUserId) {
+        const local = JSON.parse(localStorage.getItem('sunHistory') || '[]');
+        local.unshift({ location, lat: coords.lat, lng: coords.lng, sunriseTime, timestamp: Date.now() });
+        localStorage.setItem('sunHistory', JSON.stringify(local.slice(0, 20)));
+        renderLocalHistory(local);
+        return;
+      }
+      try {
+        await addDoc(collection(db, 'sunHistory'), {
+          userId: currentUserId,
+          location,
+          lat: coords.lat,
+          lng: coords.lng,
+          sunriseTime,
+          timestamp: serverTimestamp()
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function loadHistory() {
+      if (!currentUserId) return;
+      if (historyUnsubscribe) historyUnsubscribe();
+      const q = query(
+        collection(db, 'sunHistory'),
+        where('userId', '==', currentUserId),
+        orderBy('timestamp', 'desc')
+      );
+      historyUnsubscribe = onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderHistory(items);
+      });
+    }
+
+    function renderHistory(items) {
+      const list = document.getElementById('historyList');
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-state">Журнал пока пуст</div>';
+        return;
+      }
+      list.innerHTML = items.slice(0, 10).map(item => `
+        <div class="history-item" onclick="window.requery('${item.location.replace(/'/g, "\\'")}')">
+          <span class="history-location">${item.location}</span>
+          <span class="history-time">${item.sunriseTime || ''}</span>
+          <span class="delete-btn" onclick="event.stopPropagation(); window.deleteHistory('${item.id}')">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function renderLocalHistory(items) {
+      const list = document.getElementById('historyList');
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-state">Журнал пока пуст</div>';
+        return;
+      }
+      list.innerHTML = items.slice(0, 10).map(item => `
+        <div class="history-item" onclick="window.requery('${item.location.replace(/'/g, "\\'")}')">
+          <span class="history-location">${item.location}</span>
+          <span class="history-time">${item.sunriseTime || ''}</span>
+          <span class="delete-btn" onclick="event.stopPropagation(); window.deleteLocalHistory(${item.timestamp})">✕</span>
+        </div>
+      `).join('');
+    }
+
+    window.deleteHistory = async (id) => {
+      if (!currentUserId) return;
+      try {
+        await deleteDoc(doc(db, 'sunHistory', id));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    window.deleteLocalHistory = (timestamp) => {
+      const local = JSON.parse(localStorage.getItem('sunHistory') || '[]');
+      const filtered = local.filter(i => i.timestamp !== timestamp);
+      localStorage.setItem('sunHistory', JSON.stringify(filtered));
+      renderLocalHistory(filtered);
+    };
+
+    window.requery = (location) => {
+      document.getElementById('locationInput').value = location;
+      fetchSunData();
+    };
+
+    window.saveToHistory = saveToHistory;
+    window.saveProfile = saveProfile;
+  </script>
+
+  <script>
+    // ====== UNIVERSAL CLIPBOARD (works on HTTP & HTTPS) ======
+    function copyToClipboard(text) {
+      return new Promise((resolve, reject) => {
+        // Modern method (works on HTTPS)
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(resolve).catch(() => {
+            fallbackCopy(text, resolve, reject);
+          });
+        } else {
+          fallbackCopy(text, resolve, reject);
+        }
+      });
+    }
+
+    function fallbackCopy(text, resolve, reject) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+      textArea.style.padding = '0';
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+      textArea.style.background = 'transparent';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      textArea.setSelectionRange(0, 99999);
+      try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) resolve();
+        else reject(new Error('Copy command failed'));
+      } catch (err) {
+        document.body.removeChild(textArea);
+        reject(err);
+      }
+    }
+
+    // Phone formatting
+    document.getElementById('regPhone').addEventListener('input', (e) => {
+      let digits = e.target.value.replace(/\D/g, '');
+      if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+      if (!digits.startsWith('7') && digits.length > 0) digits = '7' + digits;
+      
+      let formatted = '';
+      if (digits.length > 0) formatted = '+' + digits[0];
+      if (digits.length > 1) formatted += ' (' + digits.slice(1, 4);
+      if (digits.length >= 4) formatted += ')';
+      if (digits.length >= 5) formatted += ' ' + digits.slice(4, 7);
+      if (digits.length >= 8) formatted += '-' + digits.slice(7, 9);
+      if (digits.length >= 10) formatted += '-' + digits.slice(9, 11);
+      e.target.value = formatted;
+    });
+
+    // Check registration
+    function checkRegistration() {
+      const user = JSON.parse(localStorage.getItem('sunUser') || 'null');
+      if (user && user.name && user.phone) {
+        showUser(user);
+        return true;
+      }
+      setTimeout(() => {
+        document.getElementById('regModal').classList.add('active');
+        document.getElementById('regName').focus();
+      }, 500);
+      return false;
+    }
+
+    function showUser(user) {
+      document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userPhone').textContent = user.phone;
+      document.getElementById('userSection').style.display = 'flex';
+    }
+
+    // ====== WHATSAPP CONTACT ======
+    window.contactWhatsApp = () => {
+      const user = JSON.parse(localStorage.getItem('sunUser') || '{}');
+      const userName = user.name || 'Гость';
+      const userPhone = user.phone || '';
+      const message = `Здравствуйте! Меня зовут ${userName}.%0AЯ использую приложение «Истинный Рассвет».%0AМой телефон: ${userPhone}`;
+      // 89637971386 -> +79637971386
+      const whatsappNumber = '79637971386';
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    };
+
+    window.submitRegistration = () => {
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const nameError = document.getElementById('nameError');
+      const phoneError = document.getElementById('phoneError');
+      
+      nameError.textContent = '';
+      phoneError.textContent = '';
+      
+      if (!name || name.length < 2) {
+        nameError.textContent = 'Введите имя (мин. 2 символа)';
+        return;
+      }
+      
+      if (phone.replace(/\D/g, '').length !== 11) {
+        phoneError.textContent = 'Введите корректный номер';
+        return;
+      }
+      
+      const user = { name, phone, registeredAt: Date.now() };
+      localStorage.setItem('sunUser', JSON.stringify(user));
+      
+      if (typeof window.saveProfile === 'function') {
+        window.saveProfile(name, phone);
+      }
+      
+      document.getElementById('regModal').classList.remove('active');
+      showUser(user);
+    };
+
+    // Enter in modal
+    document.getElementById('regName').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('regPhone').focus();
+    });
+    document.getElementById('regPhone').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') window.submitRegistration();
+    });
+
+    // Time updates
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = 
+        now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('currentDate').textContent = 
+        now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Coordinates and sun data
+    async function getCoordinates(location) {
+      const query = encodeURIComponent(location);
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
+      const response = await fetch(url, { headers: { 'User-Agent': 'AstroMuseum/1.0' } });
+      const data = await response.json();
+      if (data.length === 0) throw new Error('Местоположение не найдено');
+      return { 
+        lat: parseFloat(data[0].lat), 
+        lng: parseFloat(data[0].lon),
+        displayName: data[0].display_name
+      };
+    }
+
+    async function getSunTimes(lat, lng) {
+      const date = new Date().toISOString().split('T')[0];
+      const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${date}&formatted=0`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status !== 'OK') throw new Error('Ошибка API');
+      return data.results;
+    }
+
+    function formatTime(isoString) {
+      return new Date(isoString).toLocaleTimeString('ru-RU', { 
+        hour: '2-digit', minute: '2-digit', hour12: false 
+      });
+    }
+
+    function showCoords(lat, lng) {
+      currentCoords = { lat, lng };
+      const coordsDisplay = document.getElementById('coordsDisplay');
+      const coordsText = document.getElementById('coordsText');
+      coordsText.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      coordsDisplay.style.display = 'flex';
+    }
+
+    // ====== FIXED COPY FUNCTION ======
+    window.copyCoords = async (event) => {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      if (!currentCoords) return;
+      
+      const text = `${currentCoords.lat.toFixed(6)}, ${currentCoords.lng.toFixed(6)}`;
+      const btn = document.querySelector('.copy-btn');
+      const originalText = btn.textContent;
+      
+      try {
+        await copyToClipboard(text);
+        btn.textContent = '✓ Скопировано';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        // Last resort: select text for manual copy
+        const coordsText = document.getElementById('coordsText');
+        const range = document.createRange();
+        range.selectNode(coordsText);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        btn.textContent = 'Выделите вручную';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          window.getSelection().removeAllRanges();
+        }, 2000);
+      }
+    };
+
+    async function fetchSunData() {
+      const input = document.getElementById('locationInput').value.trim();
+      if (!input) {
+        alert('Введите местоположение');
+        return;
+      }
+
+      const grid = document.getElementById('resultsGrid');
+      const loading = document.getElementById('loading');
+      
+      grid.innerHTML = '';
+      grid.style.display = 'none';
+      loading.style.display = 'block';
+
+      try {
+        const coords = await getCoordinates(input);
+        const sunData = await getSunTimes(coords.lat, coords.lng);
+        
+        showCoords(coords.lat, coords.lng);
+        
+        const sunrise = new Date(sunData.sunrise);
+        const sunset = new Date(sunData.sunset);
+        const zenith = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+
+        const events = [
+          { name: '🌌 Астрономические сумерки', time: formatTime(sunData.astronomical_twilight_begin) },
+          { name: '🌅 Навигационные сумерки', time: formatTime(sunData.nautical_twilight_begin) },
+          { name: '🌄 Гражданские сумерки', time: formatTime(sunData.civil_twilight_begin) },
+          { name: '☀️ Восход солнца', time: formatTime(sunData.sunrise), highlight: true },
+          { name: '🌞 Зенит', time: formatTime(zenith) },
+          { name: '🌇 Закат', time: formatTime(sunData.sunset), highlight: true },
+          { name: '🌆 Гражданские сумерки', time: formatTime(sunData.civil_twilight_end) },
+          { name: '🌃 Навигационные сумерки', time: formatTime(sunData.nautical_twilight_end) },
+          { name: '🌌 Астрономическая ночь', time: formatTime(sunData.astronomical_twilight_end) }
+        ];
+
+        events.forEach((e, i) => {
+          const card = document.createElement('div');
+          card.className = 'result-card' + (e.highlight ? ' highlight' : '');
+          card.style.animationDelay = `${i * 0.06}s`;
+          card.innerHTML = `
+            <span class="result-label">${e.name}</span>
+            <span class="result-value">${e.time}</span>
+          `;
+          grid.appendChild(card);
+        });
+
+        grid.style.display = 'grid';
+        
+        if (typeof window.saveToHistory === 'function') {
+          window.saveToHistory(input, coords, formatTime(sunData.sunrise));
+        }
+      } catch (err) {
+        alert('Ошибка: ' + err.message);
+      } finally {
+        loading.style.display = 'none';
+      }
+    }
+
+    async function getCurrentLocation() {
+      if (!navigator.geolocation) {
+        alert('Геолокация не поддерживается');
+        return;
+      }
+      
+      document.getElementById('loading').style.display = 'block';
+      
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          const location = data.address.city || data.address.town || data.address.village || 'Моё местоположение';
+          document.getElementById('locationInput').value = location;
+          await fetchSunData();
+        } catch (err) {
+          showCoords(latitude, longitude);
+          document.getElementById('locationInput').value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+          await fetchSunData();
+        }
+      }, () => {
+        alert('Доступ к геолокации запрещён');
+        document.getElementById('loading').style.display = 'none';
+      });
+    }
+
+    document.getElementById('locationInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') fetchSunData();
+    });
+
+    // Load local history
+    const localHist = JSON.parse(localStorage.getItem('sunHistory') || '[]');
+    if (localHist.length) {
+      if (typeof renderLocalHistory === 'function') renderLocalHistory(localHist);
+    }
+
+    checkRegistration();
+  </script>
+
+<script>
+  // PWA service-worker registration. HTTPS is required by iOS Safari.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(console.error);
+    });
+  }
+</script>
+
+</body>
+</html>
+
